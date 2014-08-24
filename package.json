@@ -1,0 +1,27 @@
+{
+  "name": "simple-xml-packer",
+  "version": "0.0.1",
+  "description": "A tool to pack/unpack JS objects to a subset of XML.",
+  "main": "simple-xml-packer.js",
+  "dependencies": {
+    "simple-types": ">= 0.0.1",
+	"sax": ">= 0.6.0"
+  },
+  "scripts": {
+    "test": "node ./tests.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/somesocks/simple-xml-packer.git"
+  },
+  "keywords": [
+    "xml",
+    "packer"
+  ],
+  "author": "James Larsen (somesocks@gmail.com)",
+  "license": "Apache v2",
+  "bugs": {
+    "url": "https://github.com/somesocks/simple-xml-packer/issues"
+  },
+  "homepage": "https://github.com/somesocks/simple-xml-packer"
+}
