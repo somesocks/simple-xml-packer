@@ -23,41 +23,29 @@ Packer.unpack = function(xml){
 	var stack = [];	
 
 	parser.onerror = function(error){
-		console.log("parser error " + error);
+		//console.log("parser error " + error);
 	};
 
 	parser.ontext = function(text){
-		console.log("parser text " + text);
+		//console.log("parser text " + text);
 	};
 
 	parser.onopentag = function(node){
-		console.log("parser onopentag " + JSONPacker.pack(node));
-
-		var obj = {};
-		Types.setType(obj,node.name);
-		obj.children = [];
-
-		for (key in node.attributes){
-			obj[key] = node.attributes[key];
-		}
-
-		stack.push(obj);
+		//console.log("parser onopentag " + JSONPacker.pack(node));
+		node.children = [];
+		stack.push(node);
 	};
 
 	parser.onattribute = function(attr){
-		console.log("parser onattribute " + JSONPacker.pack(attr));
-
-		//var obj = stack.pop();
-		//obj[attr.name] = attr.value;
-		//stack.push(obj);
+		//console.log("parser onattribute " + JSONPacker.pack(attr));
 	};
 
 	parser.onclosetag = function(name){
-		console.log("parser onclosetag " + name);
-
+		//console.log("parser onclosetag " + name);
 		var obj = stack.pop();
-		var unpacker = unpackers[Types.getType(obj)];
-		if(unpacker){obj = unpacker(obj);}
+
+		var unpacker = unpackers[obj.name];
+		if(unpacker){obj = unpacker(obj.name,obj.attributes,obj.children);}
 
 		var parent = stack.pop();
 		if(parent){
@@ -74,6 +62,43 @@ Packer.unpack = function(xml){
 };
 
 Packer.pack = function(obj){
+
+	var name = Types.getType(obj);
+	if(!name){
+		name = obj.name;
+	}
+
+	var packer = packers[name];
+	
+	if(packer){obj = packer(obj)};
+
+	var xml = "";
+
+	xml = xml + "<" + name;
+
+	var attributes = obj.attributes;
+	for(key in attributes){
+		if(attributes.hasOwnProperty(key)){
+			xml = xml + " " + key + "=\"" + attributes[key] + "\"";
+		}
+	}
+
+	if(obj.children.length > 0){
+		xml = xml +">\n";
+
+		for(var i=0;i<obj.children.length;i++){
+			xml = xml + Packer.pack(obj.children[i]);
+		}
+
+		xml = xml +"</" + name + ">\n";
+	}else{
+		xml = xml + " />\n";
+	}
+
+	return xml;
 };
+
+
+
 
 module.exports = Packer;
